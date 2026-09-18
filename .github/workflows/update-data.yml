@@ -28,7 +28,7 @@ jobs:
       - name: Rename GeoJSON file to a short name
         run: |
           # Hittar filen i mappen output/geojson/ och flyttar/döper om den till mappen output/jlt.geojson
-          mv output/geojson/*trafiken.geojson output/jlt.geojson
+          mv geojson/*trafiken.geojson geojson/jlt.geojson
           # Raderar den nu tomma geojson-mappen för att hålla rent
           rm -rf output/geojson
 

@@ -27,10 +27,14 @@ jobs:
 
       - name: Rename GeoJSON file to a short name
         run: |
-          # Hittar filen i mappen output/geojson/ och flyttar/döper om den till mappen output/jlt.geojson
-          mv geojson/*trafiken.geojson geojson/jlt.geojson
-          # Raderar den nu tomma geojson-mappen för att hålla rent
-          rm -rf output/geojson
+          # 1. Skapa mappen output
+          mkdir -p output
+          
+          # 2. Flytta och döp om den långa filen inifrån geojson-mappen till output/jlt.geojson
+          mv geojson/*.geojson output/jlt.geojson
+          
+          # 3. Ta bort den gamla nu tomma geojson-mappen
+          rm -rf geojson
 
       - name: Commit and Push GeoJSON changes
         run: |

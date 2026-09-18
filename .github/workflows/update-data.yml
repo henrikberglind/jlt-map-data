@@ -21,7 +21,7 @@ jobs:
         env:
           TRAFIKLAB_API_KEY: ${{ secrets.TRAFIKLAB_API_KEY }}
         run: |
-          curl -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" -L "https://samtrafiken.se{TRAFIKLAB_API_KEY}" -o jlt.zip
+          curl -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" -L "https://opendata.samtrafiken.se/jlt/jlt.zip?key={TRAFIKLAB_API_KEY}" -o jlt.zip
 
       - name: Run GTFS to GeoJSON Conversion
         run: npx gtfs-to-geojson --configPath config.json

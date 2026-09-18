@@ -1,7 +1,7 @@
 {
   "agencies": [
     {
-      "url": "https://opendata/samtrafiken.se/gtfs/jlt/jlt.zip?key=__"
+      "url": "https://opendata.samtrafiken.se/gtfs/jlt/jlt.zip?key=__"
     }
   ],
   "exportPath": "./output",

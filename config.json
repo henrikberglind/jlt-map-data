@@ -1,0 +1,9 @@
+{
+  "agencies": [
+    {
+      "url": "https://samtrafiken.se__"
+    }
+  ],
+  "exportPath": "./output",
+  "outputType": "agency"
+}

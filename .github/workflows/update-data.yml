@@ -15,13 +15,13 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: '22'
 
-      - name: Inject API Key into Config
+      - name: Download JLT GTFS safely using curl
         env:
           TRAFIKLAB_API_KEY: ${{ secrets.TRAFIKLAB_API_KEY }}
         run: |
-          sed -i "s/__API_KEY__/${TRAFIKLAB_API_KEY}/g" config.json
+          curl -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" -L "https://samtrafiken.se{TRAFIKLAB_API_KEY}" -o jlt.zip
 
       - name: Run GTFS to GeoJSON Conversion
         run: npx gtfs-to-geojson --configPath config.json

@@ -1,4 +1,5 @@
-const gtfsToGeoJSON = require('gtfs-to-geojson');
+// Här ändrar vi till att specifikt hämta funktionen gtfsToGeoJSON från paketet
+const { gtfsToGeoJSON } = require('gtfs-to-geojson');
 const fs = require('fs');
 
 // Ersätt platshållaren i config med vår hemliga API-nyckel

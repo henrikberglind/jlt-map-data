@@ -17,11 +17,10 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Inject API Key into Config
+      - name: Download GTFS File
         env:
           TRAFIKLAB_API_KEY: ${{ secrets.TRAFIKLAB_API_KEY }}
-        run: |
-          sed -i "s/__API_KEY__/${TRAFIKLAB_API_KEY}/g" config.json
+        run: node download.js
 
       - name: Run GTFS to GeoJSON Conversion
         run: npx gtfs-to-geojson --configPath config.json

@@ -27,14 +27,24 @@ jobs:
 
       - name: Rename GeoJSON file to a short name
         run: |
-          # 1. Skapa mappen output
-          mkdir -p output
+          # Aktivera sökning i undermappar
+          shopt -s globstar
           
-          # 2. Flytta och döp om den långa filen inifrån geojson-mappen till output/jlt.geojson
-          mv geojson/*.geojson output/jlt.geojson
+          # Skapa en garanterad slutmapp för ditt resultat
+          mkdir -p final_output
           
-          # 3. Ta bort den gamla nu tomma geojson-mappen
-          rm -rf geojson
+          # Hitta .geojson-filen var den än skapades (geojson/ eller output/) och flytta den
+          if mv **/*.geojson final_output/jlt.geojson 2>/dev/null; then
+            echo "Lyckades hitta och flytta GeoJSON-filen!"
+          else
+            echo "Fel: Hittade ingen genererad GeoJSON-fil över huvud taget."
+            echo "=== Visar alla filer i katalogen för felsökning ==="
+            ls -R
+            exit 1
+          fi
+          
+          # Rensa upp eventuella tomma genererade mappar så de inte checkas in
+          rm -rf geojson output
 
       - name: Commit and Push GeoJSON changes
         run: |

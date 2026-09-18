@@ -5,5 +5,8 @@
     }
   ],
   "exportPath": "./output",
-  "outputType": "agency"
+  "outputType": "agency",
+  "outputFormat": "lines",
+  "skipImport": false,
+  "verbose": true
 }

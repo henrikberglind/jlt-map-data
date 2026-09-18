@@ -2,7 +2,9 @@ const fs = require('fs');
 
 async function downloadGTFS() {
   const apiKey = process.env.TRAFIKLAB_API_KEY;
-  const url = `https://opendata.samtrafiken.se/gtfs/jlt/jlt.zip?key={apiKey}`;
+  
+  // Vi bygger strängen genom vanlig plustecken-ihopslagning för att undvika teckenfel
+  const url = "https://samtrafiken.se" + apiKey;
   
   console.log("Försöker ladda ner JLT GTFS...");
   

@@ -4,6 +4,7 @@
       "path": "./jlt.zip"
     }
   ],
+  "date": "today",
   "exportPath": "./output",
   "outputType": "agency",
   "outputFormat": "lines",

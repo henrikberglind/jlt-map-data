@@ -31,8 +31,10 @@ jobs:
         run: |
           if [ "$DOWNLOAD_EXIT_CODE" -eq 78 ]; then
             echo "Ingen ny data hittades hos Trafiklab (304 Not Modified). Avbryter resten av byggsteget."
-            # Avbryter resten av stegen snyggt utan att indikera ett fel
+            # Skicka signal till GitHub UI att avbryta körningen snyggt
             gh run cancel ${{ github.run_id }} 
+            # STK_ADD: Stoppa omedelbart terminalen från att gå vidare till nästa steg!
+            exit 0 
           elif [ "$DOWNLOAD_EXIT_CODE" -ne 0 ]; then
             echo "Nedladdningsskriptet kraschade med ett riktigt fel (Kod: $DOWNLOAD_EXIT_CODE)."
             exit $DOWNLOAD_EXIT_CODE

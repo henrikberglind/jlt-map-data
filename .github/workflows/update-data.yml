@@ -40,8 +40,15 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Run GTFS to GeoJSON Conversion
-        run: npx gtfs-to-geojson --configPath config.json
+       # Det här steget läser in dagens datum och kör konverteringen med korrekta filter-flaggor
+      - name: Run GTFS to GeoJSON Conversion dengan filter tanggal
+        run: |
+          # Skapar dagens datum i formatet YYYYMMDD (t.ex. 20260919)
+          TODAY=$(date +'%Y%m%d')
+          echo "Kör filtrering för datum: $TODAY"
+          
+          # Vi kör verktyget och skickar med flaggorna som tvingar fram dagens kalender
+          npx gtfs-to-geojson --configPath config.json --startDate $TODAY --endDate $TODAY
 
       - name: Rename and Move GeoJSON safely
         run: |

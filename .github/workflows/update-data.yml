@@ -2,8 +2,8 @@ name: Update JLT Map Data
 
 on:
   schedule:
-    - cron: '0 5 * * *'
-  workflow_dispatch:
+    - cron: '0 5 * * *' # Körs automatiskt en gång per dygn kl 05:00
+  workflow_dispatch: # Gör att du kan starta skriptet manuellt från GitHub-gränssnittet
 
 jobs:
   build-and-deploy:
@@ -18,9 +18,27 @@ jobs:
           node-version: '22'
 
       - name: Download GTFS File
+        id: download_step
         env:
           TRAFIKLAB_API_KEY: ${{ secrets.TRAFIKLAB_API_KEY }}
-        run: node download.js
+        # continue-on-error tillåter oss att fånga upp exit-kod 78 utan att jobbet markeras som misslyckat
+        continue-on-error: true 
+        run: |
+          node download.js
+          echo "DOWNLOAD_EXIT_CODE=$?" >> $GITHUB_ENV
+
+      - name: Check if update is needed
+        run: |
+          if [ "$DOWNLOAD_EXIT_CODE" -eq 78 ]; then
+            echo "Ingen ny data hittades hos Trafiklab (304 Not Modified). Avbryter resten av byggsteget."
+            # Avbryter resten av stegen snyggt utan att indikera ett fel
+            gh run cancel ${{ github.run_id }} 
+          elif [ "$DOWNLOAD_EXIT_CODE" -ne 0 ]; then
+            echo "Nedladdningsskriptet kraschade med ett riktigt fel (Kod: $DOWNLOAD_EXIT_CODE)."
+            exit $DOWNLOAD_EXIT_CODE
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run GTFS to GeoJSON Conversion
         run: npx gtfs-to-geojson --configPath config.json
@@ -33,14 +51,18 @@ jobs:
           # Hitta .geojson-filen inuti undermapparna till mappen 'geojson' och flytta den direkt till output/jlt.geojson
           find geojson -name "*.geojson" -exec mv {} output/jlt.geojson \;
           
-          # Städa upp den temporära rådatamappen så att repot förblir rent
+          # Städa upp de temporära rådatamapparna och zip-filen så att repot förblir rent
           rm -rf geojson
           rm -f jlt.zip
 
-      - name: Commit and Push GeoJSON changes
+      - name: Commit and Push GeoJSON and ETag changes
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "actions@github.com"
+          
+          # Lägg till din genererade filer och ETag-kontrollfilen
           git add output/ .last-etag || true
-          git diff-index --quiet HEAD || git commit -m "Automated update of JLT GeoJSON"
+          
+          # Kontrollera enbart om något har ändrats inuti mappen output/ eller i .last-etag innan vi checkar in
+          git diff-index --quiet HEAD output/ .last-etag || git commit -m "Automated update of JLT GeoJSON (Conditional update)"
           git push

@@ -5,9 +5,9 @@
     }
   ],
   "date": "today",
-  "exportPath": "./output",
-  "outputType": "agency",
-  "outputFormat": "lines",
+  "exportPath": "./geojson",
+  "outputType": "shape",
+  "outputFormat": "geojson",
   "skipImport": false,
   "verbose": true
 }

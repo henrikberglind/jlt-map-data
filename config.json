@@ -4,7 +4,6 @@
       "path": "./jlt.zip"
     }
   ],
-  "date": "today",
   "exportPath": "./geojson",
   "outputType": "agency",
   "outputFormat": "lines",

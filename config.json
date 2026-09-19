@@ -7,7 +7,7 @@
   "date": "today",
   "exportPath": "./geojson",
   "outputType": "shape",
-  "outputFormat": "geojson",
+  "outputFormat": "lines",
   "skipImport": false,
   "verbose": true
 }

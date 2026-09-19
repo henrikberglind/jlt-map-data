@@ -42,7 +42,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-        - name: Inject today's date into config and run conversion
+      - name: Inject today's date into config and run conversion
         run: |
           # 1. Hämta dagens datum i formatet YYYYMMDD (t.ex. 20260919)
           TODAY=$(date +'%Y%m%d')

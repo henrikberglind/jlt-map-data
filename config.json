@@ -6,7 +6,7 @@
   ],
   "date": "today",
   "exportPath": "./geojson",
-  "outputType": "shape",
+  "outputType": "agency",
   "outputFormat": "lines",
   "skipImport": false,
   "verbose": true

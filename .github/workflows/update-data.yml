@@ -2,7 +2,7 @@ name: Update JLT Map Data
 
 on:
   schedule:
-    - cron: '13 5 * * *'
+    - cron: '13 6 * * *'
   workflow_dispatch: # Gör att du kan starta skriptet manuellt från GitHub-gränssnittet
 
 jobs:

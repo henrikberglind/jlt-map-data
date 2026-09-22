@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JLT Linjekarta med Filter</title>
+    
+    <!-- 1. Leaflet CSS och JavaScript via CDN -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <style>
+        /* Gör så att kartan tar upp hela skärmen */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 2. Behållaren där kartan kommer att ritas ut -->
+    <div id="map"></div>
+
+    <script>
+        // 3. Initiera kartan och centrera över Jönköpings län
+        const map = L.map('map').setView([57.5, 14.2], 9);
+
+        // 4. Lägg till bakgrundskarta (OpenStreetMap)
+        const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap bidragsgivare'
+        }).addTo(map);
+
+        // 5. Sökvägen till din GeoJSON-fil
+        const geojsonUrl = 'https://github.com/henrikberglind/jlt-map-data/7fad88cc1fa7bfd5dbf0b810fe7aeb0ca2b85a03/output/jlt.geojson';
+
+        // 6. Hämta och rita ut GeoJSON-datan med filtrering
+        fetch(geojsonUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Kunde inte ladda GeoJSON-filen: ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Ett objekt för att hålla reda på lagergrupper per linjenummer
+                const routeLayers = {};
+
+                // Loopa igenom alla features (linjer) i GeoJSON-datan
+                data.features.forEach(feature => {
+                    const props = feature.properties || {};
+                    const routeName = props.route_long_name || props.route_short_name || 'Okänd linje';
+
+
+                    // Skapa en Leaflet GeoJSON-komponent för just denna linje
+                    const singleLineLayer = L.geoJSON(feature, {
+                        style: function () {
+                            return {
+                                color: '#0054a6', // JLT-blå färg
+                                weight: 3,        // Lite tjockare linjer för bättre synlighet
+                                opacity: 0.8
+                            };
+                        },
+                        onEachFeature: function (f, layer) {
+                            layer.bindPopup('<b>Linje:</b> ' + routeName);
+                        }
+                    });
+
+                    // Om lagergruppen för denna linje inte finns än, skapa den och lägg till på kartan
+                    if (!routeLayers[routeName]) {
+                        routeLayers[routeName] = L.layerGroup().addTo(map);
+                    }
+
+                    // Lägg till linjesegmentet i rätt linjegrupp
+                    singleLineLayer.addTo(routeLayers[routeName]);
+                });
+
+                // Sortera linjenumren så att de visas i ordning i menyn
+                const sortedRouteLayers = {};
+                Object.keys(routeLayers).sort((a, b) => {
+                    // Sorterar numeriskt om det går, annars alfabetiskt
+                    return parseInt(a) - parseInt(b) || a.localeCompare(b);
+                }).forEach(key => {
+                    sortedRouteLayers['Linje ' + key] = routeLayers[key];
+                });
+
+                // 7. Skapa Leaflets inbyggda kontroll för kryssrutor (lagerkontroll)
+                // Det tomma objektet först {} betyder att vi inte har några alternativa bakgrundskartor
+                L.control.layers({}, sortedRouteLayers, {
+                    collapsed: false // Sätt till true om du vill att menyn ska vara ihopfälld som standard
+                }).addTo(map);
+
+            })
+            .catch(error => {
+                console.error('Det uppstod ett fel:', error);
+                alert('Kunde inte ladda kartdata. Kontrollera URL:en i koden.');
+            });
+    </script>
+</body>
+</html>

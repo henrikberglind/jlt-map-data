@@ -31,7 +31,7 @@
         const map = L.map('map').setView([57.5, 14.2], 9);
 
         // 4. Lägg till bakgrundskarta (OpenStreetMap)
-        const osm L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '© OpenStreetMap bidragsgivare'
         }).addTo(map);
